@@ -133,6 +133,7 @@ type MemoryObservationalMemoryOptions = Omit<ObservationalMemoryOptions, 'model'
   onDebugEvent?: ObservationalMemoryConfig['onDebugEvent'];
   hooks?: ObservationalMemoryConfig['hooks'];
   autoModels?: ObservationalMemoryConfig['autoModels'];
+  canUseProvider?: ObservationalMemoryConfig['canUseProvider'];
   resolveModel?: ObservationalMemoryConfig['resolveModel'];
 };
 
@@ -2369,6 +2370,7 @@ ${workingMemory}`;
       shareTokenBudget: omConfig.shareTokenBudget,
       model: omConfig.model,
       autoModels: omConfig.autoModels,
+      canUseProvider: omConfig.canUseProvider,
       resolveModel: omConfig.resolveModel,
       mastra: this._mastraInstance,
       onIndexObservations,
