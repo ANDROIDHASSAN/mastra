@@ -27,8 +27,8 @@ import { AGENT_CONTROLLER_ID } from '../../chat/services/constants';
 import { removeCachedSession, useWorkspacesQuery } from '../../../../hooks/useWorkspaces';
 import { usePinnedSessions } from '../hooks/usePinnedSessions';
 import { useSessionSort } from '../hooks/useSessionSort';
-import { deleteUserSession, regenerateSessionTitle } from '../services/user-sessions';
-import type { FactoryUserSession } from '../services/user-sessions';
+import { deleteUserSession, regenerateSessionTitle, setUserSessionVisibility } from '../services/user-sessions';
+import type { FactoryUserSession, UserSessionVisibility } from '../services/user-sessions';
 import {
   USER_SESSION_STATUS_OPTIONS,
   USER_SESSION_UPDATED_OPTIONS,
@@ -127,6 +127,17 @@ export function UserSessionsSection() {
       }),
   });
 
+  const changeVisibility = useMutation({
+    mutationFn: ({ session, visibility }: { session: FactoryUserSession; visibility: UserSessionVisibility }) =>
+      setUserSessionVisibility(baseUrl, session.sessionId, visibility),
+    onSuccess: session => {
+      invalidate();
+      void queryClient.invalidateQueries({ queryKey: queryKeys.userSession(session.sessionId) });
+      toast(session.visibility === 'org' ? 'Session shared with your organization' : 'Session is now private');
+    },
+    onError: error => toast.error(error instanceof Error ? error.message : 'Failed to change session visibility'),
+  });
+
   if (!sessionsEnabled) return null;
   const pending = deleteSession.isPending;
 
@@ -220,6 +231,12 @@ export function UserSessionsSection() {
                 onDelete={viewerUserId && !isOwn(session) ? undefined : () => setConfirmDelete(session)}
                 onRegenerateTitle={viewerUserId && !isOwn(session) ? undefined : () => regenerateTitle.mutate(session)}
                 regeneratingTitle={regenerating.has(session.sessionId)}
+                visibility={session.visibility}
+                onVisibilityChange={
+                  viewerUserId && !isOwn(session)
+                    ? undefined
+                    : visibility => changeVisibility.mutate({ session, visibility })
+                }
               />
             );
           })}
