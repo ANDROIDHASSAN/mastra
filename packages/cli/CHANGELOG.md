@@ -1,5 +1,49 @@
 # mastra
 
+## 1.34.2-alpha.3
+
+### Patch Changes
+
+- While an experiment is queued or running, its page in Studio now shows a single progress state with a spinner and how many items have finished (for example `11 / 24 items finished`), instead of KPIs and a results list that are only partly filled in. The KPIs and results appear once the run completes or fails, and Rerun stays disabled until then. The scattered in-progress hints are gone: `Running…` in the run duration, the "so far" labels and the progress count in the breadcrumb. ([#27053](https://github.com/mastra-ai/mastra/pull/27053))
+
+- Factory now explains why connecting GitHub through Mastra Platform didn't work, instead of returning silently to onboarding or settings. If the GitHub account already had the Mastra GitHub App installed before the link, it says to uninstall the App from that account and choose Connect GitHub again. It also gives plain reasons when you need to sign in to Mastra Platform first, when the link was started for a different account, was opened in another browser, or was already used, when only the GitHub account owner can link the installation, and when your Mastra account is already connected to a different GitHub account that must be disconnected first. ([#26990](https://github.com/mastra-ai/mastra/pull/26990))
+
+- The Sessions list in the Factory sidebar can now be grouped by Board, Status, Owner or None from Properties → Group, and each group can be shown or hidden from the same menu. Both choices are remembered across reloads; hidden groups are remembered per grouping. ([#27026](https://github.com/mastra-ai/mastra/pull/27026))
+
+- Added group ordering to the Factory sidebar's Sessions list. In Properties → Group, drag a group by its handle, or highlight it and press Alt+↑ or Alt+↓. The order is remembered per grouping, and moving the groups back to the default order forgets it. ([#27028](https://github.com/mastra-ai/mastra/pull/27028))
+
+- The Factory sidebar now shows one Sessions list, grouped by board (Work, Review, any custom board, then User), with a single Properties menu on its heading. Sort and filters apply to the whole list. ([#27025](https://github.com/mastra-ai/mastra/pull/27025))
+
+  - User sessions now sort by Activity by default, like Work and Review sessions.
+  - Every group shows 5 sessions, with Show more for the rest.
+  - Sessions on a custom board get their own group instead of appearing under Work.
+  - The Status filter gains Waiting on you and Done.
+
+- The Factory Slack connection settings page no longer shows the "Create work items for new Slack threads" toggle, and the Factory API commands no longer accept `slackWorkItemsEnabled` on project updates. ([#27063](https://github.com/mastra-ai/mastra/pull/27063))
+
+  Before:
+
+  ```http
+  PATCH /web/factory/projects/:id
+  { "slackWorkItemsEnabled": true }
+  ```
+
+  After: sent alone, the field is rejected as an empty update. Sent with other fields, it is ignored:
+
+  ```http
+  PATCH /web/factory/projects/:id
+  { "name": "Platform" }
+  ```
+
+- Improved experiment comparison in Studio. ([#27055](https://github.com/mastra-ai/mastra/pull/27055))
+
+  - The experiments list no longer leaves you guessing which experiments can be compared. Once you select an experiment, every experiment that ran on the same dataset is highlighted, and a note above the list gives that dataset's ID.
+  - The comparison page shows the compared dataset as a badge at the top right, linking to the dataset. Each experiment header shows the dataset version that experiment ran on, linked to the dataset at that version, and flags it when it differs from the baseline.
+
+- Updated dependencies [[`7b08a87`](https://github.com/mastra-ai/mastra/commit/7b08a876b1060cf6842c61ed8af0eaa93e1310c4), [`5d82145`](https://github.com/mastra-ai/mastra/commit/5d82145ae3cc591eb5cdafd4af5977c36fec5c01), [`eb71f8c`](https://github.com/mastra-ai/mastra/commit/eb71f8c3abbe9aa40375f898fce60f555ef9ebf3), [`35fbdce`](https://github.com/mastra-ai/mastra/commit/35fbdce6de71332246dd6d9b4a5ecba2d87fb6cc), [`cb015a1`](https://github.com/mastra-ai/mastra/commit/cb015a1be6560cbaf4deaef219cb02e63b263bc3), [`d99fa30`](https://github.com/mastra-ai/mastra/commit/d99fa305e0baa00fb2064283658c10e00b95bf10), [`632b9c7`](https://github.com/mastra-ai/mastra/commit/632b9c756b79d963c221af836079ec7cde1c0a74)]:
+  - @mastra/core@1.78.0-alpha.3
+  - @mastra/deployer@1.78.0-alpha.3
+
 ## 1.34.2-alpha.2
 
 ### Patch Changes

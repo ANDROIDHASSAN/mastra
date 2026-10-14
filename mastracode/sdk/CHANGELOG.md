@@ -1,5 +1,25 @@
 # @mastra/code-sdk
 
+## 1.14.0-alpha.3
+
+### Minor Changes
+
+- You can now remove agent controller built-in tools such as `submit_plan` without reaching into the controller's private config. Set `disableBuiltinTools` on `createMastraCode()` / `prepareAgentControllerMount()`, or on `MastraFactory` to apply it to every Factory session. When `submit_plan` is unavailable, plan mode tells the model to write the plan file instead of calling it. ([#26967](https://github.com/mastra-ai/mastra/pull/26967))
+
+  ```ts
+  new MastraFactory({ storage, disableBuiltinTools: ['submit_plan'] });
+  ```
+
+### Patch Changes
+
+- Updated dependencies [[`c6230e3`](https://github.com/mastra-ai/mastra/commit/c6230e30f76b4b912bad68f426d730da1cb67d83), [`eb71f8c`](https://github.com/mastra-ai/mastra/commit/eb71f8c3abbe9aa40375f898fce60f555ef9ebf3), [`7b08a87`](https://github.com/mastra-ai/mastra/commit/7b08a876b1060cf6842c61ed8af0eaa93e1310c4), [`5d82145`](https://github.com/mastra-ai/mastra/commit/5d82145ae3cc591eb5cdafd4af5977c36fec5c01), [`eb71f8c`](https://github.com/mastra-ai/mastra/commit/eb71f8c3abbe9aa40375f898fce60f555ef9ebf3), [`eb71f8c`](https://github.com/mastra-ai/mastra/commit/eb71f8c3abbe9aa40375f898fce60f555ef9ebf3), [`35fbdce`](https://github.com/mastra-ai/mastra/commit/35fbdce6de71332246dd6d9b4a5ecba2d87fb6cc), [`cb015a1`](https://github.com/mastra-ai/mastra/commit/cb015a1be6560cbaf4deaef219cb02e63b263bc3), [`d99fa30`](https://github.com/mastra-ai/mastra/commit/d99fa305e0baa00fb2064283658c10e00b95bf10)]:
+  - @mastra/schema-compat@1.3.15-alpha.0
+  - @mastra/duckdb@1.14.1-alpha.0
+  - @mastra/core@1.78.0-alpha.3
+  - @mastra/pg@1.31.2-alpha.1
+  - @mastra/mcp@2.4.1-alpha.0
+  - @mastra/memory@1.37.2-alpha.0
+
 ## 1.14.0-alpha.2
 
 ### Minor Changes

@@ -1,5 +1,26 @@
 # @mastra/pg
 
+## 1.31.2-alpha.1
+
+### Patch Changes
+
+- Trace and span lists now read short stored previews instead of each span's full input. Every span stores previews of its input, output and error when it is written, and `queryTraces()` and `querySpans()` read them. Lists also return `outputPreview` and `errorPreview`, and `querySpans()` adds `errorPreview` and `errorTruncated`. ([#26567](https://github.com/mastra-ai/mastra/pull/26567))
+
+  Generated previews use the shared format from `@mastra/core`: at most 100 characters plus `…` when cut. For message lists they show the last user message. `querySpans()` previews used to be the first 256 characters of raw JSON. Nonblank supplied previews are trimmed and capped the same way; missing or blank write-time previews are generated from their payloads.
+
+  `listTracesLight()` also reads stored previews. NULL previews trigger batched payload reads and application-side generation; stored empty strings do not. With older core versions that lack the optional preview helper, preview fields pass through unchanged without generation.
+
+  `storage.init()` adds `inputPreview`, `outputPreview` and `errorPreview` columns to `mastra_span_events`. This runs automatically on first use. If you set `disableInit: true`, run `storage.init()` from your migration step before deploying, or apply the columns yourself (use your schema name if it isn't `public`):
+
+  ```sql
+  ALTER TABLE "public"."mastra_span_events" ADD COLUMN IF NOT EXISTS "inputPreview" text;
+  ALTER TABLE "public"."mastra_span_events" ADD COLUMN IF NOT EXISTS "outputPreview" text;
+  ALTER TABLE "public"."mastra_span_events" ADD COLUMN IF NOT EXISTS "errorPreview" text;
+  ```
+
+- Updated dependencies [[`7b08a87`](https://github.com/mastra-ai/mastra/commit/7b08a876b1060cf6842c61ed8af0eaa93e1310c4), [`5d82145`](https://github.com/mastra-ai/mastra/commit/5d82145ae3cc591eb5cdafd4af5977c36fec5c01), [`eb71f8c`](https://github.com/mastra-ai/mastra/commit/eb71f8c3abbe9aa40375f898fce60f555ef9ebf3), [`35fbdce`](https://github.com/mastra-ai/mastra/commit/35fbdce6de71332246dd6d9b4a5ecba2d87fb6cc), [`cb015a1`](https://github.com/mastra-ai/mastra/commit/cb015a1be6560cbaf4deaef219cb02e63b263bc3), [`d99fa30`](https://github.com/mastra-ai/mastra/commit/d99fa305e0baa00fb2064283658c10e00b95bf10)]:
+  - @mastra/core@1.78.0-alpha.3
+
 ## 1.31.2-alpha.0
 
 ### Patch Changes

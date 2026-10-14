@@ -1,5 +1,41 @@
 # @mastra/factory
 
+## 0.23.0-alpha.3
+
+### Minor Changes
+
+- You can now remove agent controller built-in tools such as `submit_plan` without reaching into the controller's private config. Set `disableBuiltinTools` on `createMastraCode()` / `prepareAgentControllerMount()`, or on `MastraFactory` to apply it to every Factory session. When `submit_plan` is unavailable, plan mode tells the model to write the plan file instead of calling it. ([#26967](https://github.com/mastra-ai/mastra/pull/26967))
+
+  ```ts
+  new MastraFactory({ storage, disableBuiltinTools: ['submit_plan'] });
+  ```
+
+- Slack threads no longer create Work board cards. A Slack DM or @-mention still starts its session and posts the "New session started" card, whatever the factory's old setting was. ([#27063](https://github.com/mastra-ai/mastra/pull/27063))
+
+  The `slackWorkItemsEnabled` project setting is removed from the project update API.
+
+  Before:
+
+  ```http
+  PATCH /web/factory/projects/:id
+  { "slackWorkItemsEnabled": true }
+  ```
+
+  After: sent alone, the field is rejected as an empty update (400, "At least one project field is required"). Sent with other fields, it is ignored:
+
+  ```http
+  PATCH /web/factory/projects/:id
+  { "name": "Platform" }
+  ```
+
+  Slack-thread cards that already exist keep receiving `aside` comments and keep posting feed comments back to Slack.
+
+### Patch Changes
+
+- Updated dependencies [[`386fe60`](https://github.com/mastra-ai/mastra/commit/386fe608e8ec763277b13138b6c3b37641bc6c50), [`7b08a87`](https://github.com/mastra-ai/mastra/commit/7b08a876b1060cf6842c61ed8af0eaa93e1310c4), [`5d82145`](https://github.com/mastra-ai/mastra/commit/5d82145ae3cc591eb5cdafd4af5977c36fec5c01), [`eb71f8c`](https://github.com/mastra-ai/mastra/commit/eb71f8c3abbe9aa40375f898fce60f555ef9ebf3), [`35fbdce`](https://github.com/mastra-ai/mastra/commit/35fbdce6de71332246dd6d9b4a5ecba2d87fb6cc), [`cb015a1`](https://github.com/mastra-ai/mastra/commit/cb015a1be6560cbaf4deaef219cb02e63b263bc3), [`d99fa30`](https://github.com/mastra-ai/mastra/commit/d99fa305e0baa00fb2064283658c10e00b95bf10)]:
+  - @mastra/code-sdk@1.14.0-alpha.3
+  - @mastra/core@1.78.0-alpha.3
+
 ## 0.23.0-alpha.2
 
 ### Minor Changes
