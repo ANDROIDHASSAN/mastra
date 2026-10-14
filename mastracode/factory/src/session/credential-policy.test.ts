@@ -426,17 +426,11 @@ describe('trusted Factory credential policy', () => {
     await expect(prepareCredentialTenant(unavailable)).rejects.toThrow('could not be resolved');
   });
 
-  it('refreshes supervisor policy from the actual project and rejects foreign supervisors', async () => {
-    const { seed, project, context } = await setup();
-    const ctx = context(`factory-supervisor:${project.id}`);
-    await prepareCredentialTenant(ctx);
-    expect(resolveCredentialStore(ctx)?.getStoredApiKey('openai-codex')).toBe('org-key');
-    await seed.projects.update({ orgId: ORG, id: project.id, input: { modelScope: 'user' } });
-    await prepareCredentialTenant(ctx);
-    expect(resolveCredentialStore(ctx)?.getStoredApiKey('openai-codex')).toBe('owner-key');
-    await expect(
-      prepareCredentialTenant(context(`factory-supervisor:${project.id}`, 'sender', 'org-2')),
-    ).rejects.toThrow('policy is unavailable');
+  it('refuses a project-keyed resourceId from a retired session kind instead of reading the project policy', async () => {
+    const { project, context } = await setup();
+    const ctx = context(`factory-retired-kind:${project.id}`);
+    await expect(prepareCredentialTenant(ctx)).rejects.toThrow('ownership is unavailable');
+    expect(resolveTenantFromRequestContext(ctx)).toBeUndefined();
   });
 
   it('ignores HTTP state forgery during real Agent model resolution and fails closed on subsequent policy errors', async () => {
