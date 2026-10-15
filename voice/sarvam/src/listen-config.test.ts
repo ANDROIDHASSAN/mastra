@@ -71,6 +71,31 @@ describe('SarvamVoice.listen', () => {
     expect(form.get('language_code')).toBe('unknown');
     expect(form.has('mode')).toBe(false);
   });
+
+  it('sends the listening model API key, not the speech model one', async () => {
+    const voice = new SarvamVoice({
+      speechModel: { apiKey: 'tts-key' },
+      listeningModel: { apiKey: 'stt-key' },
+    });
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ transcript: 'ok' }), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await voice.listen(Readable.from([Buffer.from('RIFF')]));
+
+    const headers = (fetchMock.mock.calls[0]![1] as RequestInit).headers as Record<string, string>;
+    expect(headers['api-subscription-key']).toBe('stt-key');
+  });
+
+  it('sends the apiKey passed to listen()', async () => {
+    const voice = new SarvamVoice({ listeningModel: { apiKey: 'stt-key' } });
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ transcript: 'ok' }), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await voice.listen(Readable.from([Buffer.from('RIFF')]), { apiKey: 'per-call-key' });
+
+    const headers = (fetchMock.mock.calls[0]![1] as RequestInit).headers as Record<string, string>;
+    expect(headers['api-subscription-key']).toBe('per-call-key');
+  });
 });
 
 describe('SarvamVoice API errors', () => {
